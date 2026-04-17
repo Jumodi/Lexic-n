@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lexicon — Vocabulario Académico</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #FAF6ED;
+            --surface: #FFFBF5;
+            --text: #2C1810;
+            --text-light: #6B4F4B;
+            --primary: #B85C38;
+            --primary-dark: #8B4513;
+            --secondary: #2C5F2D;
+            --accent: #D4A373;
+            --error: #C0392B;
+            --shadow: rgba(44, 24, 16, 0.08);
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: radial-gradient(circle at 100% 0%, rgba(212, 163, 115, 0.15) 0%, transparent 40%);
+        }
+
+        header {
+            width: 100%;
+            max-width: 800px;
+            padding: 2rem 1.5rem 1rem;
+            text-align: center;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        h1 {
+            font-family: 'Crimson Pro', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+        }
+
+        h1 span { color: var(--primary); font-style: italic; }
+
+        .subtitle {
+            margin-top: 0.5rem;
+            font-size: 1rem;
+            color: var(--text-light);
+            font-weight: 300;
+        }
+
+        main {
+            width: 100%;
+            max-width: 800px;
+            padding: 1rem 1.5rem 3rem;
+            flex: 1;
+        }
+
+        /* MENU */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.2rem;
+            margin-top: 2rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .mode-card {
+            background: var(--surface);
+            border: 1px solid rgba(139, 69, 19, 0.1);
+            border-radius: var(--radius);
+            padding: 1.8rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 20px var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(44, 24, 16, 0.12);
+            border-color: rgba(184, 92, 56, 0.3);
+        }
+
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--primary);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .mode-card:hover::before { opacity: 1; }
+
+        .mode-icon {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+        .mode-title {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .mode-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.4;
+        }
+
+        /* GAME SCREENS */
+        .game-screen { display: none; animation: fadeIn 0.5s ease; }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid rgba(44, 24, 16, 0.15);
+            color: var(--text);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover { background: rgba(44, 24, 16, 0.05); }
+
+        .score-pill {
+            background: var(--surface);
+            border: 1px solid rgba(139, 69, 19, 0.15);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--primary-dark);
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        /* CARD QUIZ */
+        .quiz-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: 0 8px 32px var(--shadow);
+            border: 1px solid rgba(139, 69, 19, 0.08);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-label {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .question-text {
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .question-hint {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.8rem;
+        }
+
+        @media(min-width: 600px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .option-btn {
+            background: var(--surface);
+            border: 1.5px solid rgba(44, 24, 16, 0.1);
+            border-radius: 12px;
+            padding: 1.1rem 1rem;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            color: var(--text);
+            transition: all 0.2s;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary);
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(184, 92, 56, 0.1);
+        }
+
+        .option-btn.correct {
+            background: #E8F5E9;
+            border-color: var(--secondary);
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .option-btn.wrong {
+            background: #FFEBEE;
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        .option-btn:disabled { cursor: default; }
+
+        .option-prefix {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            border-radius: 50%;
+            background: rgba(44, 24, 16, 0.06);
+            margin-right: 0.6rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .option-btn:hover .option-prefix { background: rgba(184, 92, 56, 0.15); color: var(--primary); }
+
+        /* INPUT GAME */
+        .input-group {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .word-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.9rem 1.2rem;
+            border: 2px solid rgba(44, 24, 16, 0.12);
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            color: var(--text);
+            background: var(--surface);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .word-input:focus { border-color: var(--primary); }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.9rem 2rem;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 16px rgba(184, 92, 56, 0.3);
+        }
+
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .btn-primary:active { transform: translateY(0); }
+
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 500;
+            min-height: 1.5rem;
+            animation: fadeIn 0.3s;
+        }
+
+        .feedback.correct { color: var(--secondary); }
+        .feedback.wrong { color: var(--error); }
+
+        .hint-box {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(212, 163, 115, 0.12);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            display: none;
+        }
+
+        /* MEMORY GAME */
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8rem;
+            margin-top: 1rem;
+            perspective: 1000px;
+        }
+
+        @media(max-width: 500px) {
+            .memory-grid { grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: var(--surface);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+            padding: 0.5rem;
+            border: 2px solid rgba(139, 69, 19, 0.1);
+            transition: all 0.3s;
+            position: relative;
+            box-shadow: 0 2px 8px var(--shadow);
+            user-select: none;
+        }
+
+        .memory-card:hover:not(.flipped):not(.matched) {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .memory-card.flipped {
+            background: #FFF8E1;
+            border-color: var(--accent);
+            color: var(--primary-dark);
+            font-family: 'Crimson Pro', serif;
+            font-weight: 600;
+        }
+
+        .memory-card.matched {
+            background: #E8F5E9;
+            border-color: var(--secondary);
+            color: var(--secondary);
+            cursor: default;
+            animation: pulse 0.5s;
+        }
+
+        .memory-card.hidden-text { color: transparent; }
+        .memory-card.hidden-text::after {
+            content: '✦';
+            position: absolute;
+            color: var(--accent);
+            font-size: 1.5rem;
+            opacity: 0.5;
+        }
+
+        /* PROGRESS */
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(44, 24, 16, 0.08);
+            border-radius: 3px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.5s ease;
+            border-radius: 3px;
+        }
+
+        /* UTILS */
+        .center { text-align: center; }
+        .mt-1 { margin-top: 1rem; }
+        .mt-2 { margin-top: 2rem; }
+
+        .streak {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* STATS END SCREEN */
+        .end-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 2.5rem 2rem;
+            text-align: center;
+            box-shadow: 0 12px 40px var(--shadow);
+            border: 1px solid rgba(139, 69, 19, 0.1);
+            animation: fadeInUp 0.6s;
+        }
+
+        .end-score {
+            font-family: 'Crimson Pro', serif;
+            font-size: 3rem;
+            color: var(--primary);
+            margin: 1rem 0;
+        }
+
+        .hidden { display: none !important; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+        .shake { animation: shake 0.4s; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1><span>Lexicon</span> Académico</h1>
+    <p class="subtitle">Raíces griegas, latinas y vocabulario avanzado</p>
+</header>
+
+<main>
+    <!-- MENU PRINCIPAL -->
+    <div id="menu-screen" class="game-screen" style="display:block;">
+        <div class="menu-grid">
+            <div class="mode-card" onclick="startGame('roots')">
+                <span class="mode-icon">🜨</span>
+                <div class="mode-title">Etimología Flash</div>
+                <div class="mode-desc">Relaciona raíces griegas y latinas con su significado original.</div>
+            </div>
+            <div class="mode-card" onclick="startGame('defs')">
+                <span class="mode-icon">✦</span>
+                <div class="mode-title">Definición Exacta</div>
+                <div class="mode-desc">Demuestra que dominas el vocabulario no productivo del documento.</div>
+            </div>
+            <div class="mode-card" onclick="startGame('spell')">
+                <span class="mode-icon">✍</span>
+                <div class="mode-title">Ortografía de Piedra</div>
+                <div class="mode-desc">Escribe la palabra correcta a partir de su definición y etimología.</div>
+            </div>
+            <div class="mode-card" onclick="startGame('memory')">
+                <span class="mode-icon">◈</span>
+                <div class="mode-title">Memoria de Pares</div>
+                <div class="mode-desc">Encuentra las parejas: raíz ↔ significado. Agudiza tu memoria visual.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME: ROOTS -->
+    <div id="roots-screen" class="game-screen">
+        <div class="game-header">
+            <button class="btn-back" onclick="showMenu()">← Volver</button>
+            <div style="display:flex; gap:0.8rem; align-items:center;">
+                <div class="streak" id="roots-streak"></div>
+                <div class="score-pill">Puntos: <span id="roots-score">0</span></div>
+            </div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="roots-progress" style="width:0%"></div></div>
+        <div class="quiz-card">
+            <div class="question-label">Significado de la raíz</div>
+            <div class="question-text" id="roots-question"></div>
+            <div class="question-hint" id="roots-hint"></div>
+        </div>
+        <div class="options-grid" id="roots-options"></div>
+    </div>
+
+    <!-- GAME: DEFINITIONS -->
+    <div id="defs-screen" class="game-screen">
+        <div class="game-header">
+            <button class="btn-back" onclick="showMenu()">← Volver</button>
+            <div style="display:flex; gap:0.8rem; align-items:center;">
+                <div class="streak" id="defs-streak"></div>
+                <div class="score-pill">Puntos: <span id="defs-score">0</span></div>
+            </div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="defs-progress" style="width:0%"></div></div>
+        <div class="quiz-card">
+            <div class="question-label">Definición de</div>
+            <div class="question-text" id="defs-question"></div>
+            <div class="question-hint" id="defs-hint"></div>
+        </div>
+        <div class="options-grid" id="defs-options"></div>
+    </div>
+
+    <!-- GAME: SPELLING -->
+    <div id="spell-screen" class="game-screen">
+        <div class="game-header">
+            <button class="btn-back" onclick="showMenu()">← Volver</button>
+            <div class="score-pill">Puntos: <span id="spell-score">0</span></div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="spell-progress" style="width:0%"></div></div>
+        <div class="quiz-card">
+            <div class="question-label">Escribe la palabra</div>
+            <div class="question-text" id="spell-definition"></div>
+            <div class="question-hint" id="spell-etymology"></div>
+            <div class="input-group">
+                <input type="text" class="word-input" id="spell-input" placeholder="Escribe aquí..." autocomplete="off">
+                <button class="btn-primary" onclick="checkSpelling()">Comprobar</button>
+            </div>
+            <div class="feedback" id="spell-feedback"></div>
+            <div class="hint-box" id="spell-hint-box">
+                <strong>Pista:</strong> la palabra empieza por <span id="spell-hint-text"></span>
+            </div>
+            <button class="btn-back mt-1" onclick="nextSpell()" id="spell-next" style="display:none;">Siguiente →</button>
+        </div>
+    </div>
+
+    <!-- GAME: MEMORY -->
+    <div id="memory-screen" class="game-screen">
+        <div class="game-header">
+            <button class="btn-back" onclick="showMenu()">← Volver</button>
+            <div class="score-pill">Pares: <span id="memory-pairs">0</span>/8</div>
+        </div>
+        <div class="memory-grid" id="memory-grid"></div>
+        <p class="center mt-1" style="color:var(--text-light); font-size:0.9rem;">Haz clic en dos cartas para encontrar su pareja.</p>
+    </div>
+
+    <!-- END SCREEN -->
+    <div id="end-screen" class="game-screen">
+        <div class="end-card">
+            <div class="question-label">Sesión completada</div>
+            <div class="end-score" id="end-score">0</div>
+            <p id="end-message" style="color:var(--text-light); margin-bottom:1.5rem;"></p>
+            <button class="btn-primary" onclick="showMenu()">Volver al menú</button>
+        </div>
+    </div>
+</main>
+
+<script>
+/* ========================
+   DATA: VOCABULARIO
+   ======================== */
+const rootsData = [
+    { root: "Antropo-", meaning: "hombre", origin: "gr. ánthrōpos", examples: ["antropología", "antropófago", "filantropía", "misantropía"] },
+    { root: "Bio-", meaning: "vida", origin: "gr. bíos", examples: ["biología", "biografía", "biodiversidad", "antibiótico"] },
+    { root: "Geo-", meaning: "tierra", origin: "gr. gē", examples: ["geografía", "geología", "geopolítica", "geocéntrico"] },
+    { root: "Tele-", meaning: "a distancia", origin: "gr. tēle", examples: ["teléfono", "televisión", "telégrafo", "telepatía"] },
+    { root: "Poli-/Polis-", meaning: "ciudad", origin: "gr. pólis", examples: ["cosmopolita", "metrópolis", "necrópolis", "Acrópolis"] },
+    { root: "Demo-", meaning: "pueblo", origin: "gr. dēmos", examples: ["democracia", "demografía", "demagogo", "pandemia"] },
+    { root: "Crono-", meaning: "tiempo", origin: "gr. chrónos", examples: ["cronología", "cronómetro", "crónica", "anacrónico"] },
+    { root: "Auto-", meaning: "propio / sí mismo", origin: "gr. autós", examples: ["automático", "autobiografía", "autodidacta", "autonomía"] },
+    { root: "Micro-", meaning: "pequeño", origin: "gr. mikrós", examples: ["microscópico", "microcosmos", "microbiología", "microeconomía"] },
+    { root: "Macro-", meaning: "grande", origin: "gr. makrós", examples: ["macroeconomía", "macroscópico", "macrocosmos", "macronutriente"] },
+    { root: "Socio-", meaning: "compañero / sociedad", origin: "lat. socius", examples: ["sociología", "sociedad", "socioeconómico", "asociación"] },
+    { root: "Filo-", meaning: "afín / amante", origin: "gr. phílos", examples: ["filosofía", "filantropía", "filología", "cinefilia"] },
+    { root: "Etno-", meaning: "pueblo / raza", origin: "gr. éthnos", examples: ["etnografía", "etnología", "etnocentrismo", "etnobotánica"] },
+    { root: "Eco-", meaning: "casa / hogar", origin: "gr. oîkos", examples: ["ecología", "economía", "ecosistema", "bioeconomía"] },
+    { root: "-logía", meaning: "estudio / tratado", origin: "gr. lógos", examples: ["biología", "psicología", "teología", "terminología"] },
+    { root: "-fobia", meaning: "miedo", origin: "gr. phóbos", examples: ["claustrofobia", "xenofobia", "aracnofobia", "agorafobia"] },
+    { root: "-grafía", meaning: "escritura / descripción", origin: "gr. graphē", examples: ["geografía", "ortografía", "fotografía", "bibliografía"] },
+    { root: "-fonía", meaning: "sonido", origin: "gr. phōnē", examples: ["sinfonía", "telefonía", "fonología", "cacofonía"] },
+    { root: "-nomía", meaning: "ley / norma", origin: "gr. nómos", examples: ["astronomía", "autonomía", "gastronomía", "taxonomía"] },
+    { root: "-cracia", meaning: "poder / gobierno", origin: "gr. krátos", examples: ["democracia", "aristocracia", "burocracia", "meritocracia"] }
+];
+
+const vocabData = [
+    { word: "inexorable", def: "Que no se puede evitar ni detener", etymology: "lat. inexorābilis", hint: "in..." },
+    { word: "perentorio", def: "Concluyente o urgente", etymology: "lat. peremptorius", hint: "per..." },
+    { word: "conjetura", def: "Juicio o hipótesis basado en indicios", etymology: "lat. coniectūra", hint: "con..." },
+    { word: "axioma", def: "Proposición tan evidente que no necesita demostración", etymology: "gr. axíōma", hint: "ax..." },
+    { word: "parangón", def: "Comparación o semejanza", etymology: "med. lat. paragonare", hint: "par..." },
+    { word: "ineludible", def: "Que no se puede eludir ni esquivar", etymology: "lat. ineluctabilis", hint: "inel..." },
+    { word: "tácito", def: "Implícito, no expresado verbalmente", etymology: "lat. tacĭtus", hint: "tác..." },
+    { word: "aprehender", def: "Captar o entender algo; también 'asir físicamente'", etymology: "lat. apprehendere", hint: "apreh..." },
+    { word: "dilucidar", def: "Aclarar o explicar algo confuso", etymology: "lat. dilucidāre", hint: "dilu..." },
+    { word: "abjurar", def: "Retractarse o renegar de una creencia", etymology: "lat. abiūrāre", hint: "abj..." },
+    { word: "abominar", def: "Detestar o maldecir algo considerado malo", etymology: "lat. abomināri", hint: "abom..." },
+    { word: "abulia", def: "Falta de voluntad o energía", etymology: "gr. aboulía", hint: "abu..." },
+    { word: "acrisolar", def: "Purificar o depurar intensamente", etymology: "lat. 'refinar en crisol'", hint: "acri..." },
+    { word: "intrínseco", def: "Que es propio y esencial", etymology: "lat. intrinsecus", hint: "intrín..." },
+    { word: "pernicioso", def: "Muy dañino o perjudicial", etymology: "lat. perniciosus", hint: "perni..." },
+    { word: "congruente", def: "Que está de acuerdo o es coherente", etymology: "lat. congruēns", hint: "congr..." },
+    { word: "síncope", def: "Pérdida breve del conocimiento", etymology: "gr. sun-kopē", hint: "sín..." },
+    { word: "noctívago", def: "Que sale de noche, noctámbulo", etymology: "lat. nox + vagari", hint: "noctí..." },
+    { word: "lúgubre", def: "Triste, sombrío", etymology: "lat. lugubris", hint: "lúgu..." },
+    { word: "infame", def: "Despreciable, vil", etymology: "lat. infāmis", hint: "inf..." },
+    { word: "inequívoco", def: "Claro e indudable", etymology: "lat. in + aequus + vox", hint: "inequí..." },
+    { word: "cándido", def: "Ingenuo, sin malicia", etymology: "lat. candidus", hint: "cánd..." },
+    { word: "omnívoro", def: "Que come de todo", etymology: "lat. omni + voro", hint: "omní..." },
+    { word: "epítome", def: "Resumen breve", etymology: "gr. epitomḗ", hint: "epí..." },
+    { word: "plenitud", def: "Estado completo o perfecto", etymology: "lat. plenitudo", hint: "plen..." },
+    { word: "anatema", def: "Maldición grave o cosa repudiada", etymology: "gr. anathēma", hint: "anat..." },
+    { word: "amalgama", def: "Mezcla heterogénea", etymology: "gr. málagma", hint: "amal..." },
+    { word: "fátuo", def: "Vano, que no tiene fundamento", etymology: "lat. fatuus", hint: "fát..." },
+    { word: "ezurrón", def: "Persona avara o tacaña", etymology: "lat. geso", hint: "ezu..." },
+    { word: "opresivo", def: "Que oprime o agobia", etymology: "lat. oppressivus", hint: "opre..." },
+    { word: "sarcástico", def: "Burlón, irónico", etymology: "gr. sarkazein", hint: "sarcás..." },
+    { word: "lenitivo", def: "Calmante, suavizante", etymology: "lat. lenitivus", hint: "leni..." },
+    { word: "otredad", def: "Cualidad de ser otro, alteridad", etymology: "lat. alter", hint: "otre..." },
+    { word: "coetáneo", def: "De la misma edad o época", etymology: "lat. coaetaneus", hint: "coetá..." },
+    { word: "cisma", def: "División o ruptura en un grupo", etymology: "gr. skísmă", hint: "cis..." }
+];
+
+/* ========================
+   STATE
+   ======================== */
+let currentGame = null;
+let score = 0;
+let streak = 0;
+let maxQuestions = 10;
+let currentQIndex = 0;
+let questions = [];
+let memoryState = { cards: [], flipped: [], matched: 0, locked: false };
+
+/* ========================
+   UTILS
+   ======================== */
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function normalize(str) {
+    return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+}
+
+function showMenu() {
+    document.querySelectorAll('.game-screen').forEach(s => s.style.display = 'none');
+    document.getElementById('menu-screen').style.display = 'block';
+    currentGame = null;
+}
+
+function updateProgress(id, current, total) {
+    const pct = ((current) / total) * 100;
+    document.getElementById(id).style.width = pct + '%';
+}
+
+/* ========================
+   GAME: ROOTS
+   ======================== */
+function startRoots() {
+    score = 0; streak = 0; currentQIndex = 0;
+    questions = shuffle(rootsData).slice(0, maxQuestions);
+    document.getElementById('roots-score').textContent = '0';
+    document.getElementById('roots-streak').textContent = '';
+    updateProgress('roots-progress', 0, maxQuestions);
+    nextRootQuestion();
+}
+
+function nextRootQuestion() {
+    if (currentQIndex >= maxQuestions) return endGame(score);
+    const q = questions[currentQIndex];
+    document.getElementById('roots-question').textContent = q.root;
+    document.getElementById('roots-hint').textContent = `Origen: ${q.origin}`;
+    
+    // Generate options: correct + 3 random meanings
+    const others = shuffle(rootsData.filter(r => r.root !== q.root)).slice(0, 3);
+    const opts = shuffle([{ text: q.meaning, correct: true }, ...others.map(r => ({ text: r.meaning, correct: false }))]);
+    
+    const container = document.getElementById('roots-options');
+    container.innerHTML = '';
+    const labels = ['A', 'B', 'C', 'D'];
+    opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `<span class="option-prefix">${labels[idx]}</span>${opt.text}`;
+        btn.onclick = () => handleRootAnswer(btn, opt.correct);
+        container.appendChild(btn);
+    });
+}
+
+function handleRootAnswer(btn, correct) {
+    const all = document.querySelectorAll('#roots-options .option-btn');
+    all.forEach(b => b.disabled = true);
+    if (correct) {
+        btn.classList.add('correct');
+        score += 10 + (streak * 2);
+        streak++;
+        document.getElementById('roots-streak').innerHTML = '🔥 ' + streak;
+    } else {
+        btn.classList.add('wrong');
+        // highlight correct
+        all.forEach(b => { if (!b.classList.contains('wrong') && b.innerText.includes(questions[currentQIndex].meaning)) b.classList.add('correct'); });
+        streak = 0;
+        document.getElementById('roots-streak').textContent = '';
+        btn.parentElement.classList.add('shake');
+        setTimeout(() => btn.parentElement.classList.remove('shake'), 400);
+    }
+    document.getElementById('roots-score').textContent = score;
+    currentQIndex++;
+    updateProgress('roots-progress', currentQIndex, maxQuestions);
+    setTimeout(nextRootQuestion, 1200);
+}
+
+/* ========================
+   GAME: DEFINITIONS
+   ======================== */
+function startDefs() {
+    score = 0; streak = 0; currentQIndex = 0;
+    questions = shuffle(vocabData).slice(0, maxQuestions);
+    document.getElementById('defs-score').textContent = '0';
+    document.getElementById('defs-streak').textContent = '';
+    updateProgress('defs-progress', 0, maxQuestions);
+    nextDefQuestion();
+}
+
+function nextDefQuestion() {
+    if (currentQIndex >= maxQuestions) return endGame(score);
+    const q = questions[currentQIndex];
+    document.getElementById('defs-question').textContent = q.word;
+    document.getElementById('defs-hint').textContent = `Etimología: ${q.etymology}`;
+    
+    const others = shuffle(vocabData.filter(v => v.word !== q.word)).slice(0, 3);
+    const opts = shuffle([{ text: q.def, correct: true }, ...others.map(v => ({ text: v.def, correct: false }))]);
+    
+    const container = document.getElementById('defs-options');
+    container.innerHTML = '';
+    const labels = ['A', 'B', 'C', 'D'];
+    opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `<span class="option-prefix">${labels[idx]}</span>${opt.text}`;
+        btn.onclick = () => handleDefAnswer(btn, opt.correct);
+        container.appendChild(btn);
+    });
+}
+
+function handleDefAnswer(btn, correct) {
+    const all = document.querySelectorAll('#defs-options .option-btn');
+    all.forEach(b => b.disabled = true);
+    if (correct) {
+        btn.classList.add('correct');
+        score += 10 + (streak * 2);
+        streak++;
+        document.getElementById('defs-streak').innerHTML = '🔥 ' + streak;
+    } else {
+        btn.classList.add('wrong');
+        all.forEach(b => { if (!b.classList.contains('wrong') && b.innerText.includes(questions[currentQIndex].def)) b.classList.add('correct'); });
+        streak = 0;
+        document.getElementById('defs-streak').textContent = '';
+        btn.parentElement.classList.add('shake');
+        setTimeout(() => btn.parentElement.classList.remove('shake'), 400);
+    }
+    document.getElementById('defs-score').textContent = score;
+    currentQIndex++;
+    updateProgress('defs-progress', currentQIndex, maxQuestions);
+    setTimeout(nextDefQuestion, 1500);
+}
+
+/* ========================
+   GAME: SPELLING
+   ======================== */
+function startSpell() {
+    score = 0; currentQIndex = 0;
+    questions = shuffle(vocabData).slice(0, maxQuestions);
+    document.getElementById('spell-score').textContent = '0';
+    updateProgress('spell-progress', 0, maxQuestions);
+    nextSpell();
+}
+
+function nextSpell() {
+    if (currentQIndex >= maxQuestions) return endGame(score);
+    const q = questions[currentQIndex];
+    document.getElementById('spell-definition').textContent = q.def;
+    document.getElementById('spell-etymology').textContent = `Origen: ${q.etymology}`;
+    document.getElementById('spell-input').value = '';
+    document.getElementById('spell-feedback').textContent = '';
+    document.getElementById('spell-feedback').className = 'feedback';
+    document.getElementById('spell-hint-box').style.display = 'none';
+    document.getElementById('spell-next').style.display = 'none';
+    document.getElementById('spell-input').disabled = false;
+    document.getElementById('spell-input').focus();
+}
+
+function checkSpelling() {
+    const q = questions[currentQIndex];
+    const input = document.getElementById('spell-input');
+    const val = normalize(input.value);
+    const correct = normalize(q.word);
+    const fb = document.getElementById('spell-feedback');
+    
+    if (val === '') return;
+    
+    input.disabled = true;
+    
+    if (val === correct) {
+        fb.textContent = '¡Correcto! +15 puntos';
+        fb.className = 'feedback correct';
+        score += 15;
+        document.getElementById('spell-score').textContent = score;
+        document.getElementById('spell-next').style.display = 'inline-block';
+        currentQIndex++;
+        updateProgress('spell-progress', currentQIndex, maxQuestions);
+    } else {
+        fb.textContent = `Incorrecto. La palabra era: ${q.word}`;
+        fb.className = 'feedback wrong';
+        document.getElementById('spell-hint-box').style.display = 'block';
+        document.getElementById('spell-hint-text').textContent = `"${q.hint}"`;
+        document.getElementById('spell-next').style.display = 'inline-block';
+        currentQIndex++;
+        updateProgress('spell-progress', currentQIndex, maxQuestions);
+    }
+}
+
+document.getElementById('spell-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') checkSpelling();
+});
+
+/* ========================
+   GAME: MEMORY
+   ======================== */
+function startMemory() {
+    memoryState.matched = 0;
+    memoryState.flipped = [];
+    memoryState.locked = false;
+    document.getElementById('memory-pairs').textContent = '0';
+    
+    // Pick 8 random roots
+    const selected = shuffle(rootsData).slice(0, 8);
+    const cards = [];
+    selected.forEach((r, i) => {
+        cards.push({ id: i, type: 'root', content: r.root, pairId: i });
+        cards.push({ id: i + 100, type: 'meaning', content: r.meaning, pairId: i });
+    });
+    memoryState.cards = shuffle(cards);
+    renderMemoryGrid();
+}
+
+function renderMemoryGrid() {
+    const grid = document.getElementById('memory-grid');
+    grid.innerHTML = '';
+    memoryState.cards.forEach((card, idx) => {
+        const div = document.createElement('div');
+        div.className = 'memory-card hidden-text';
+        div.dataset.index = idx;
+        div.dataset.pair = card.pairId;
+        div.onclick = () => flipCard(div, card);
+        grid.appendChild(div);
+    });
+}
+
+function flipCard(el, card) {
+    if (memoryState.locked) return;
+    if (el.classList.contains('flipped') || el.classList.contains('matched')) return;
+    if (memoryState.flipped.length >= 2) return;
+    
+    el.classList.remove('hidden-text');
+    el.classList.add('flipped');
+    el.textContent = card.content;
+    memoryState.flipped.push({ el, card });
+    
+    if (memoryState.flipped.length === 2) {
+        const [first, second] = memoryState.flipped;
+        if (first.card.pairId === second.card.pairId && first.card.type !== second.card.type) {
+            // Match
+            memoryState.locked = true;
+            setTimeout(() => {
+                first.el.classList.replace('flipped', 'matched');
+                second.el.classList.replace('flipped', 'matched');
+                memoryState.flipped = [];
+                memoryState.locked = false;
+                memoryState.matched++;
+                document.getElementById('memory-pairs').textContent = memoryState.matched;
+                if (memoryState.matched === 8) {
+                    setTimeout(() => alert('¡Felicidades! Has emparejado todas las raíces.'), 300);
+                }
+            }, 600);
+        } else {
+            memoryState.locked = true;
+            setTimeout(() => {
+                first.el.classList.remove('flipped');
+                first.el.classList.add('hidden-text');
+                first.el.textContent = '';
+                second.el.classList.remove('flipped');
+                second.el.classList.add('hidden-text');
+                second.el.textContent = '';
+                memoryState.flipped = [];
+                memoryState.locked = false;
+            }, 900);
+        }
+    }
+}
+
+/* ========================
+   GAME ROUTER
+   ======================== */
+function startGame(mode) {
+    currentGame = mode;
+    document.querySelectorAll('.game-screen').forEach(s => s.style.display = 'none');
+    document.getElementById(mode + '-screen').style.display = 'block';
+    
+    if (mode === 'roots') startRoots();
+    else if (mode === 'defs') startDefs();
+    else if (mode === 'spell') startSpell();
+    else if (mode === 'memory') startMemory();
+}
+
+function endGame(finalScore) {
+    document.querySelectorAll('.game-screen').forEach(s => s.style.display = 'none');
+    document.getElementById('end-screen').style.display = 'block';
+    document.getElementById('end-score').textContent = finalScore;
+    
+    let msg = '';
+    if (finalScore >= 140) msg = '¡Maestría absoluta! Dominas el léxico como un filólogo clásico.';
+    else if (finalScore >= 100) msg = '¡Excelente trabajo! Tu vocabulario es sólido y elegante.';
+    else if (finalScore >= 60) msg = 'Buen intento. Un poco más de práctica y dominarás estas raíces.';
+    else msg = 'Todo gran erudito empieza por algo. ¡Vuelve a intentarlo!';
+    document.getElementById('end-message').textContent = msg;
+}
+</script>
+
+</body>
+</html>
